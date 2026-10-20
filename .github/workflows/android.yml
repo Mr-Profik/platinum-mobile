@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -19,19 +19,18 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Install Android SDK tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y android-sdk
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
 
-      - name: Build APK
+      - name: Build debug APK
         run: gradle --no-daemon assembleDebug
 
       - uses: actions/upload-artifact@v4
         with:
           name: PlatinumMobile-debug-apk
           path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
